@@ -25,14 +25,13 @@ namespace HemtestRESTAPI.Controllers
 
             if (Request.Headers.TryGetValue("Version", out var clientversion)){
 
-                //If needed handle different client versions here
-                return "correct version";
+                return "correct sollution by version";
 
             } else {
 
             }
             */
-            return CountWordsService.CountWords(text);
+                return CountWordsService.CountWords(text);
 
         }
 

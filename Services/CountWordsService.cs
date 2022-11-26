@@ -4,15 +4,21 @@ namespace HemtestRESTAPI.Services
 {
     public static class CountWordsService
     {
-        
+        static string blinka = "Blinka, lilla stjärna där,\r\nhur jag undrar vad du är.\r\nFjärran lockar du min syn,\r\nlik en diamant i skyn.\r\nBlinka, lilla stjärna där,\r\nhur jag undrar vad du är.\r\nNär den sköna sol gått ner,\r\nstrax du kommer fram och ler.\r\nBörjar klar din stilla gång,\r\nglimrar, glimrar natten lång.\r\nBlinka, lilla stjärna där,\r\nhur jag undrar vad du är.\r\nVandraren på nattlig stig,\r\nför ditt ljus, han älskar dig.\r\nHade icke sett att gå,\r\nom du icke glimrat så.\r\nBlinka, lilla stjärna där,\r\nhur jag undrar vad du är.";
 
         public static string CountWords(string text)
         {
+            
+            string tmps = RemoveSpecialCharacters(text);
+
             //Remove special characters (except spaces and swedish characters) and then place them in a dictionary with the word as key and the number of times it appears as value
-            Dictionary<string,int> countedwords = SumWords(RemoveSpecialCharacters(text));
+            Dictionary<string,int> countedwords = SumWords(tmps);
 
             //Use the dictionary to return a string with the 10 words that occurs most frequently and their number of appearances
-            return MergeDictionary(countedwords);
+            string tmp =  MergeDictionary(countedwords);
+            //string tmp = SumWordsCoPilot(RemoveSpecialCharacters(blinka));
+            Console.WriteLine(tmp);
+            return tmp;
         }
 
 
@@ -65,11 +71,22 @@ namespace HemtestRESTAPI.Services
             var ordered = wordCount.OrderByDescending(x => x.Value).ThenBy(x => x.Key);
             string result = "";
 
-            //We only want the 10 most frequent words
-            for (int i = 0; i < 10; i++)
+            //Check if we have more than 10 words
+            if (ordered.Count() < 10)
             {
-                result += "\"" + ordered.ElementAt(i).Key + "\": " + ordered.ElementAt(i).Value + ", ";
+                foreach (var item in ordered)
+                {
+                    result += "\"" + item.Key + "\": " + item.Value + ", ";
+                }
             }
+            else //We only want the 10 most frequent words
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    result += "\"" + ordered.ElementAt(i).Key + "\": " + ordered.ElementAt(i).Value + ", ";
+                }
+            }
+
 
             //Remove the last comma and space
             result = result.Remove(result.Length - 2);
@@ -84,12 +101,11 @@ namespace HemtestRESTAPI.Services
 
 
         /*
-         *  The following method is a suggestion from a colleague, it is a bit more complicated but it is faster and uses less memory //According to GitHub CoPilot :)))))
+         *  The following method is a suggestion from a colleague, it is a bit more complicated but it is faster and uses less memory //According to GitHub CoPilot :)))
          */
 
-        //Not yet tested for efficency (answers seems correct)
 
-       
+
         //A method to count each word in a string and return a string with the 10 most frequent words and their number of appearances, the words are sorted by number of appearances, without using a dictionary
         public static string SumWordsCoPilot(string text)
         {
